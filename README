@@ -1,0 +1,13 @@
+FlyMe2theMoon multi-user interface
+
+I wrote this for my Programming 2 class, where we used Visual Basic code to create OOP applications.
+This culminated all the skills I learned in Programming 1 and 2, as well as what I learned in SQL.
+It allows customers or admins to log in and do various tasks. These tasks are committed to the database that 
+stores all relevant information.
+
+Installation Instructions: I downloaded Visual Studio 2019 and selected the Windows framework. You will also need
+Microsoft SQL Server. You will need to download the SQL provided along with the code to run the application correctly.
+
+Usage: This project is meant to allow for one user at a time to interact with it to perform many functions. Customers can 
+register for the first time, update their information, book a flight, add another passenger, view previous flight history, and future flight history.
+Admins can add employees or update their information. They can also assign them to flights and view their previous and future flight history.
