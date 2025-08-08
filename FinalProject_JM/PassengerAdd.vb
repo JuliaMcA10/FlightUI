@@ -1,0 +1,269 @@
+﻿Public Class frmPassengerAdd
+    Private Sub frmPassengerAdd_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Dim strSelect As String = ""
+        Dim cmdSelect As OleDb.OleDbCommand
+        Dim drSourceTable As OleDb.OleDbDataReader
+        Dim dtStates As DataTable = New DataTable
+
+        Try
+
+            If OpenDatabaseConnectionSQLServer() = False Then
+
+                MessageBox.Show(Me, "Database connection error." & vbNewLine &
+                                "The application will now close.",
+                                Me.Text + " Error",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error)
+
+                Me.Close()
+
+            End If
+
+            strSelect = "SELECT intStateID, strState FROM TStates"
+
+            cmdSelect = New OleDb.OleDbCommand(strSelect, m_conAdministrator)
+            drSourceTable = cmdSelect.ExecuteReader
+            dtStates.Load(drSourceTable)
+
+
+            cboState.ValueMember = "intStateID"
+            cboState.DisplayMember = "strState"
+            cboState.DataSource = dtStates
+
+            drSourceTable.Close()
+
+            CloseDatabaseConnection()
+
+        Catch excError As Exception
+
+            MessageBox.Show(excError.Message)
+
+        End Try
+    End Sub
+
+    Private Sub btnSubmit_Click(sender As Object, e As EventArgs) Handles btnSubmit.Click
+        Dim strFirstName As String
+        Dim strLastName As String
+        Dim strAddress As String
+        Dim strCity As String
+        Dim intStateID As Integer
+        Dim strZip As String
+        Dim strPhoneNumber As String
+        Dim strEmail As String
+        Dim strLogin As String
+        Dim strPassword As String
+        Dim dtmBirthday As Date = dteBirthday.Text
+        Dim blnValidated As Boolean = True
+
+        Get_Validated_Input(strFirstName, strLastName, strAddress, strCity, intStateID, strZip, strPhoneNumber, strEmail, strLogin, strPassword, dtmBirthday, blnValidated)
+        If blnValidated = True Then
+            Add_Passenger(strFirstName, strLastName, strAddress, strCity, intStateID, strZip, strPhoneNumber, strEmail, strLogin, strPassword, dtmBirthday)
+        End If
+
+    End Sub
+
+    Private Sub Get_Validated_Input(ByRef strFirstName As String, ByRef strLastName As String, ByRef strAddress As String, ByRef strCity As String, ByRef intStateID As Integer, ByRef strZip As String, ByRef strPhoneNumber As String, ByRef strEmail As String, ByRef strLogin As String, ByRef strPassword As String, ByRef dtmBirthday As Date, ByRef blnValidated As Boolean)
+
+        Get_Validate_First_Name(strFirstName, blnValidated)
+        If blnValidated Then
+            Get_Validate_Last_Name(strLastName, blnValidated)
+            If blnValidated Then
+                Get_Validate_Address(strAddress, blnValidated)
+                If blnValidated Then
+                    Get_Validate_City(strCity, blnValidated)
+                    If blnValidated Then
+                        Get_Validate_State(intStateID, blnValidated)
+                        If blnValidated Then
+                            Get_Validate_Zip(strZip, blnValidated)
+                            If blnValidated Then
+                                Get_Validate_Phone_Number(strPhoneNumber, blnValidated)
+                                If blnValidated Then
+                                    Get_Validate_Email(strEmail, blnValidated)
+                                    If blnValidated Then
+                                        Get_Validate_Login(strLogin, blnValidated)
+                                        If blnValidated Then
+                                            Get_Validate_Password(strPassword, blnValidated)
+
+                                        End If
+                                    End If
+                                End If
+                            End If
+                        End If
+                    End If
+                End If
+            End If
+        End If
+
+    End Sub
+
+    Private Sub Get_Validate_First_Name(ByRef strFirstName As String, ByRef blnValidated As Boolean)
+
+        If txtFirstName.Text = "" Then
+            MessageBox.Show("First name is required")
+            txtFirstName.Focus()
+        Else
+            strFirstName = txtFirstName.Text
+        End If
+    End Sub
+
+    Private Sub Get_Validate_Last_Name(ByRef strLastName As String, ByRef blnValidated As Boolean)
+        If txtLastName.Text = "" Then
+            MessageBox.Show("Last name is required")
+            txtLastName.Focus()
+        Else
+            strLastName = txtLastName.Text
+        End If
+    End Sub
+
+    Private Sub Get_Validate_Address(ByRef strAddress As String, ByRef blnValidated As Boolean)
+        If txtAddress.Text = "" Then
+            MessageBox.Show("Address is required")
+            txtAddress.Focus()
+        Else
+            strAddress = txtAddress.Text
+        End If
+    End Sub
+
+    Private Sub Get_Validate_City(ByRef strCity As String, ByRef blnValidated As Boolean)
+        If txtCity.Text = "" Then
+            MessageBox.Show("City is required")
+            txtCity.Focus()
+        Else
+            strCity = txtCity.Text
+        End If
+    End Sub
+
+    Private Sub Get_Validate_State(ByRef intStateID As Integer, ByRef blnValidated As Boolean)
+        If cboState.SelectedIndex + 1 > 0 < 4 Then
+            intStateID = cboState.SelectedIndex + 1
+        Else
+            MessageBox.Show("State is required")
+            blnValidated = False
+            cboState.Focus()
+        End If
+
+    End Sub
+
+    Private Sub Get_Validate_Zip(ByRef strZip As String, ByRef blnValidated As Boolean)
+        If txtZip.Text = "" Then
+            MessageBox.Show("Zip code is required")
+            txtZip.Focus()
+        Else
+            strZip = txtZip.Text
+        End If
+    End Sub
+
+    Private Sub Get_Validate_Phone_Number(ByRef strPhoneNumber As String, ByRef blnValidated As Boolean)
+        If txtPhoneNumber.Text = "" Then
+            MessageBox.Show("Phone number is required")
+            txtPhoneNumber.Focus()
+        Else
+            strPhoneNumber = txtPhoneNumber.Text
+        End If
+    End Sub
+
+    Private Sub Get_Validate_Email(ByRef strEmail As String, ByRef blnValidated As Boolean)
+        If txtEmail.Text = "" Then
+            MessageBox.Show("Email is required")
+            txtEmail.Focus()
+            blnValidated = False
+        Else
+            If Not txtEmail.Text.IndexOf("@") > 0 Then
+                MessageBox.Show("Email must have an @ symbol")
+                txtEmail.Focus()
+                blnValidated = False
+            End If
+            strEmail = txtEmail.Text
+        End If
+
+    End Sub
+
+    Private Sub Get_Validate_Login(ByRef strLogin As String, ByRef blnValidated As Boolean)
+        If txtLoginID.Text = "" Then
+            MessageBox.Show("Login ID is required")
+            txtLoginID.Focus()
+        Else
+            strLogin = txtLoginID.Text
+        End If
+    End Sub
+
+    Private Sub Get_Validate_Password(ByRef strPassword As String, ByRef blnValidated As Boolean)
+        If txtPassword.Text = "" Then
+            MessageBox.Show("Password is required")
+            txtPassword.Focus()
+        Else
+            strPassword = txtPassword.Text
+        End If
+    End Sub
+
+    Private Sub Add_Passenger(ByVal strFirstName As String, ByVal strLastName As String, ByVal strAddress As String, ByVal strCity As String, ByVal intStateID As Integer, ByVal strZip As String, ByVal strPhoneNumber As String, ByVal strEmail As String, ByVal strLogin As String, ByVal strPassword As String, ByVal dtmBirthday As Date)
+        Dim strSelect As String
+        Dim strInsert As String
+
+        Dim cmdSelect As OleDb.OleDbCommand
+        Dim cmdInsert As OleDb.OleDbCommand
+        Dim drSourceTable As OleDb.OleDbDataReader
+        Dim intNextPrimaryKey As Integer
+        Dim intRowsAffected As Integer
+
+        Dim cmdAddPassenger As New OleDb.OleDbCommand()
+
+        Try
+
+            If OpenDatabaseConnectionSQLServer() = False Then
+
+                MessageBox.Show(Me, "Database connection error." & vbNewLine &
+                                            "The application will now close.",
+                                            Me.Text + " Error",
+                                            MessageBoxButtons.OK, MessageBoxIcon.Error)
+
+                Me.Close()
+
+            End If
+
+            cmdAddPassenger.CommandText = "EXECUTE uspAddPassenger '" & intNextPrimaryKey & "','" & strFirstName & "','" & strLastName & "','" & strAddress & "','" & strCity & "','" & intStateID & "','" & strZip & "','" & strPhoneNumber & "','" & strEmail & "','" & strLogin & "','" & strPassword & "','" & dtmBirthday & "'"
+            cmdAddPassenger.CommandType = CommandType.StoredProcedure
+
+            cmdAddPassenger = New OleDb.OleDbCommand(cmdAddPassenger.CommandText, m_conAdministrator)
+
+            intRowsAffected = cmdAddPassenger.ExecuteNonQuery()
+
+            CloseDatabaseConnection()
+
+            If intRowsAffected > 0 Then
+                MessageBox.Show("Insert successful Passenger " & strLastName & " has been added.")
+                Me.Close()
+            Else
+                MessageBox.Show("Insert failed")
+                Me.Close()
+            End If
+
+
+
+
+
+
+        Catch ex As Exception
+            MessageBox.Show(ex.Message)
+        End Try
+
+        intNewPassengerID = intNextPrimaryKey
+
+
+        txtFirstName.Clear()
+        txtLastName.Clear()
+        txtAddress.Clear()
+        txtCity.Clear()
+        cboState.ResetText()
+        txtZip.Clear()
+        txtPhoneNumber.Clear()
+        txtEmail.Clear()
+
+
+    End Sub
+
+    Private Sub btnExit_Click(sender As Object, e As EventArgs) Handles btnExit.Click
+
+        Close()
+
+    End Sub
+End Class
