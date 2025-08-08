@@ -7,6 +7,7 @@ stores all relevant information.
 
 Installation Instructions: I downloaded Visual Studio 2019 and selected the Windows framework. You will also need
 Microsoft SQL Server. You will need to download the SQL provided along with the code to run the application correctly.
+You will also need to download and run all of the Stored Procedures made for this project to ensure proper functionality.
 
 Usage: This project is meant to allow for one user at a time to interact with it to perform many functions. Customers can 
 register for the first time, update their information, book a flight, add another passenger, view previous flight history, and future flight history.
